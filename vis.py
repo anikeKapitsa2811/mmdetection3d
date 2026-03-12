@@ -24,21 +24,41 @@
 # We support drawing point cloud on the image by using `draw_points_on_image`.
 
 
+import os
 import mmcv
 import numpy as np
 from mmengine import load
 from mmdet3d.visualization import Det3DLocalVisualizer
 
+HAS_DISPLAY = bool(os.environ.get('DISPLAY') or os.environ.get('WAYLAND_DISPLAY'))
+
+
+def show_image_or_save(visualizer, out_file):
+    if HAS_DISPLAY:
+        visualizer.show()
+        return
+    mmcv.mkdir_or_exist('demo/vis_outputs')
+    img_rgb = visualizer.get_image()
+    mmcv.imwrite(mmcv.imconvert(img_rgb, 'rgb', 'bgr'), out_file)
+    print(f'No GUI display detected. Saved visualization to: {out_file}')
+
+
+def show_o3d_hint(visualizer):
+    if HAS_DISPLAY:
+        visualizer.show()
+    else:
+        print('No GUI display detected. Open3D windows from visualizer.show() will not be visible in this environment.')
+
 info_file = load('demo/data/kitti/000008.pk')
 points = np.fromfile('demo/data/kitti/000008.bin', dtype=np.float32)
 points = points.reshape(-1, 4)[:, :3]
 lidar2img = np.array(info_file['data_list'][0]['images']['CAM2']['lidar2img'], dtype=np.float32)
-visualizer = Det3DLocalVisualizer
+visualizer = Det3DLocalVisualizer()
 img = mmcv.imread('demo/data/kitti/000008.png')
 img = mmcv.imconvert(img, 'bgr', 'rgb')
 visualizer.set_image(img)
 visualizer.draw_points_on_image(points, lidar2img)
-visualizer.show()
+show_image_or_save(visualizer, "demo/vis_outputs/points_on_image.png")
 
 # ### Drawing 3D Boxes on Point Cloud
 # 
@@ -56,10 +76,11 @@ visualizer = Det3DLocalVisualizer()
 # set point cloud in visualizer
 visualizer.set_points(points)
 bboxes_3d = LiDARInstance3DBoxes(
- torch.tensor([8.7314, -1.8559, -1.5997, 4.2000, 3.4800, 1.8900, -1.5808]))
+ torch.tensor([[8.7314, -1.8559, -1.5997, 4.2000, 3.4800, 1.8900, -1.5808]]))
 # Draw 3D bboxes
-visualizer.draw_bboxes_3d(bboxes_3d)
-visualizer.show()
+visualizer.draw_bboxes_3d(
+        bboxes_3d, bbox_color=np.array([[0, 255, 0]], dtype=np.float64))
+show_o3d_hint(visualizer)
 
 # ### Drawing Projected 3D Boxes on Image
 # 
@@ -88,7 +109,7 @@ visualizer = Det3DLocalVisualizer()
 visualizer.set_bev_image()
 # draw bev bboxes
 visualizer.draw_bev_bboxes(gt_bboxes_3d, edge_colors='orange')
-visualizer.show()
+show_image_or_save(visualizer, "demo/vis_outputs/bev_boxes.png")
 
 # Drawing 3D Semantic Mask
 # 
@@ -106,7 +127,7 @@ points_with_mask = np.concatenate((points, mask), axis=-1)
 # Draw 3D points with mask
 visualizer.set_points(points, pcd_mode=2, vis_mode='add')
 visualizer.draw_seg_mask(points_with_mask)
-visualizer.show()
+show_o3d_hint(visualizer)
 
 # ## Results
 # 
@@ -161,7 +182,7 @@ visualizer.set_image(img)
 # project 3D bboxes to image
 visualizer.draw_proj_bboxes_3d(gt_bboxes_3d, input_meta)
 
-visualizer.show()
+show_image_or_save(visualizer, "demo/vis_outputs/proj_boxes_on_image.png")
 
 # This allows the inference and results generation to be done in remote server and the users can open them on their host with GUI.
 
