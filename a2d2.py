@@ -13,13 +13,19 @@ pprint.pprint(config)
 
 
 config.keys()
-"""Each sensor in 'lidars', 'cameras', and 'vehicle' has an associated 'view'. A view is a sensor coordinate system, defined by an origin, an x-axis, and a y-axis. These are specified in cartesian coordinates (in m) relative to an external coordinate system. Unless otherwise stated the external coordinate system is the car's frame of reference.
+"""Each sensor in 'lidars', 'cameras', and 'vehicle' has an associated 'view'. A view is a sensor coordinate system, defined by an origin, 
+an x-axis, and a y-axis. These are specified in cartesian coordinates (in m) relative to an external coordinate system. 
+Unless otherwise stated the external coordinate system is the car's frame of reference.
 
-'vehicle' contains a 'view' object specifying the frame of reference of the car. It also contains an 'ego-dimensions' object, which specifies the extension of the vehicle in the frame of reference of the car.
+'vehicle' contains a 'view' object specifying the frame of reference of the car. It also contains an 'ego-dimensions' object, which specifies 
+the extension of the vehicle in the frame of reference of the car.
 
-The 'lidars' object contains objects specifying the extrinsic calibration parameters for each LiDAR sensor. Our car has five LiDAR sensors: 'front_left', 'front_center', 'front_right', 'rear_right', and 'rear_left'. Each LiDAR has a 'view' defining its pose in the frame of reference of the car.
+The 'lidars' object contains objects specifying the extrinsic calibration parameters for each LiDAR sensor. Our car has five 
+LiDAR sensors: 'front_left', 'front_center', 'front_right', 'rear_right', and 'rear_left'. Each LiDAR has a 'view' defining its pose in the frame of reference of the car.
 
-The 'cameras' object contains camera objects which specify their calibration parameters. The car has six cameras: 'front_left', 'front_center', 'front_right', 'side_right', 'rear_center' and 'side_left'. Each camera object contains:
+The 'cameras' object contains camera objects which specify their calibration parameters. 
+The car has six cameras: 'front_left', 'front_center', 'front_right', 'side_right', 'rear_center' and 'side_left'.
+Each camera object contains:
 
 'view'- pose of the camera relative to the external coordinate system (frame of reference of the car)
 'Lens'- type of lens used. It can take two values: 'Fisheye' or 'Telecam'
