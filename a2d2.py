@@ -21,7 +21,8 @@ Unless otherwise stated the external coordinate system is the car's frame of ref
 the extension of the vehicle in the frame of reference of the car.
 
 The 'lidars' object contains objects specifying the extrinsic calibration parameters for each LiDAR sensor. Our car has five 
-LiDAR sensors: 'front_left', 'front_center', 'front_right', 'rear_right', and 'rear_left'. Each LiDAR has a 'view' defining its pose in the frame of reference of the car.
+LiDAR sensors: 'front_left', 'front_center', 'front_right', 'rear_right', and 'rear_left'. 
+Each LiDAR has a 'view' defining its pose in the frame of reference of the car.
 
 The 'cameras' object contains camera objects which specify their calibration parameters. 
 The car has six cameras: 'front_left', 'front_center', 'front_right', 'side_right', 'rear_center' and 'side_left'.
