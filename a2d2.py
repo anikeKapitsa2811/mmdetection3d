@@ -42,7 +42,8 @@ config['vehicle'].keys()
 #Likewise for LiDAR sensors:
 
 config['lidars'].keys()
-#Here we see the names of the LiDAR sensors mounted on the car. For example, the configuration parameters for the front_left LiDAR sensor can be accessed using
+#Here we see the names of the LiDAR sensors mounted on the car. For example, the configuration parameters for the front_left 
+#LiDAR sensor can be accessed using
 
 config['lidars']['front_left']
 #The camera sensors mounted on the car can be obtained using
@@ -53,7 +54,9 @@ config['cameras'].keys()
 config['cameras']['front_left']
 """
 Working with view objects
-We have seen that the vehicle and each sensor in the configuration file have a 'view' object. A view specifies the pose of a sensor relative to an external coordinate system, here the frame of reference of the car. In the following we use the term 'global' interchangeably with 'frame of reference of the car'.
+We have seen that the vehicle and each sensor in the configuration file have a 'view' object.
+A view specifies the pose of a sensor relative to an external coordinate system, here the frame of reference of the car. 
+In the following we use the term 'global' interchangeably with 'frame of reference of the car'.
 
 A view associated with a sensor can be accessed as follows:
 """
@@ -99,7 +102,8 @@ def get_axes_of_a_view(view):
     return x_axis, y_axis, z_axis
 def get_origin_of_a_view(view):
     return view['origin']
-#A homogeneous transformation matrix from view point to global coordinates (inverse "extrinsic" matrix) can be obtained as follows. Note that this matrix contains the axes and the origin in its columns.
+#A homogeneous transformation matrix from view point to global coordinates (inverse "extrinsic" matrix) can be obtained as follows.
+#Note that this matrix contains the axes and the origin in its columns.
 
 def get_transform_to_global(view):
     # get axes
@@ -146,7 +150,8 @@ print(transform_from_global)
  [-8.09890350e-02  9.96661051e-01  1.03694477e-02 -4.49267371e-01]
  [ 1.16333982e-03 -1.03090934e-02  9.99946183e-01 -9.39105431e-01]
  [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  1.00000000e+00]]
-The transform_to_global and transform_from_global matrices should be the inverse of one another. Check that muliplying them results in an identity matrix (subject to numerical precision):
+The transform_to_global and transform_from_global matrices should be the inverse of one another. Check that muliplying them results in an
+identity matrix (subject to numerical precision):
 """
 print(np.matmul(transform_from_global, transform_to_global))
 """[[ 1.00000000e+00 -4.05809291e-18 -7.51833703e-21  0.00000000e+00]
@@ -207,7 +212,8 @@ print(rot)
 """[[ 0.99614958  0.08757611  0.00405482]
  [-0.0876356   0.99598808  0.01810349]
  [-0.00245312 -0.01838914  0.9998279 ]]
-In the same manner, we can also calculate a transformation matrix from a source view to a target view. This will give us a 4x4 homogeneous transformation matrix describing the total transformation (rotation and shift) from the source view coordinate system into the target view coordinate system.
+In the same manner, we can also calculate a transformation matrix from a source view to a target view. This will give us a 4x4 
+homogeneous transformation matrix describing the total transformation (rotation and shift) from the source view coordinate system into the target view coordinate system.
 """
 def transform_from_to(src, target):
     transform = np.dot(get_transform_from_global(target), \
@@ -239,10 +245,13 @@ print(np.matmul(trans, transt))
  [ 9.38784819e-18  1.00000000e+00 -1.78819878e-18  0.00000000e+00]
  [-2.59997757e-19 -1.78819878e-18  1.00000000e+00 -5.20417043e-18]
  [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  1.00000000e+00]]
-We have seen that by using views we can transform coordinates from one sensor to another, or from a sensor to global global coordinates (and vice versa). In the following section, we read point clouds corresponding to all cameras. The point clouds are in camera view coordinates. In order to get a coherent view of the point clouds, we need to transform them into global coordinates.
+We have seen that by using views we can transform coordinates from one sensor to another, or from a sensor to global global 
+coordinates (and vice versa). In the following section, we read point clouds corresponding to all cameras. The point clouds are in
+camera view coordinates. In order to get a coherent view of the point clouds, we need to transform them into global coordinates.
 
 Working with LiDAR data
-First, read a LiDAR point cloud corresponding to the front center camera. The LiDAR data is saved in compressed numpy format, which can be read as follows:
+First, read a LiDAR point cloud corresponding to the front center camera. The LiDAR data is saved in compressed numpy format, 
+which can be read as follows:
 """
 from os.path import join
 import glob
@@ -280,10 +289,12 @@ depth = lidar_front_center['depth']
 #Since the car is equipped with five LiDAR sensors, you can get the LiDAR sensor ID of each point using
 
 lidar_ids = lidar_front_center['lidar_id']
-#One way of visualizing point clouds is to use the Open3D library. The library supports beyond visualization other functionalities useful for point cloud processing. For more information on the library please refer to http://www.open3d.org/docs/release/.
+#One way of visualizing point clouds is to use the Open3D library. The library supports beyond visualization other functionalities
+#useful for point cloud processing. For more information on the library please refer to http://www.open3d.org/docs/release/.
 
 import open3d as o3
-#To visualize the LiDAR point clouds, we need to create an Open3D point cloud from the 3D points and reflectance values. The following function generates colors based on the reflectance values.
+#To visualize the LiDAR point clouds, we need to create an Open3D point cloud from the 3D points and reflectance values.
+#The following function generates colors based on the reflectance values.
 
 # Create array of RGB colour values from the given array of reflectance values
 def colours_from_reflectances(reflectances):
@@ -328,7 +339,8 @@ src_view_front_center = config['cameras']['front_center']['view']
 #The vehicle view is the global view
 
 vehicle_view = target_view = config['vehicle']['view']
-#The following function maps LiDAR data from one view to another. Note the use of the function 'transform_from_to'. LiDAR data is provided in a camera reference frame.
+#The following function maps LiDAR data from one view to another. Note the use of the function 'transform_from_to'. 
+#LiDAR data is provided in a camera reference frame.
 
 def project_lidar_from_to(lidar, src_view, target_view):
     lidar = dict(lidar)
@@ -386,7 +398,8 @@ pt.axis('off')
 pt.title('front center')
 #Text(0.5, 1.0, 'front center')
 
-#In order to map point clouds onto images, or in order to color point clouds using colors drived from images, we need to perform distortion correction.
+#In order to map point clouds onto images, or in order to color point clouds using colors drived from images,
+#we need to perform distortion correction.
 
 def undistort_image(image, cam_name):
     if cam_name in ['front_left', 'front_center', \
@@ -418,7 +431,8 @@ pt.axis('off')
 pt.title('front center')
 #Text(0.5, 1.0, 'front center')
 
-#Each image has a timestamp and a LiDAR point cloud associated with it. The timestamp information is saved for each image in JSON format. Let us open the file for the front center camera.
+#Each image has a timestamp and a LiDAR point cloud associated with it. The timestamp information is saved for each image in JSON format. 
+#Let us open the file for the front center camera.
 
 file_name_image_info = file_name_image.replace(".png", ".json")
 
@@ -441,7 +455,8 @@ pprint.pprint(image_info_front_center)
                '4': 'rear_left'}}
 
 """
-We can see that the camera info contains the camera name, the time stamp in TAI (international atomic time) and a dictionary associating the LiDAR IDs with names of the LiDARs.
+We can see that the camera info contains the camera name, the time stamp in TAI (international atomic time) and a dictionary associating
+the LiDAR IDs with names of the LiDARs.
 
 The LiDAR points are already mapped onto the undistorted images. The rows and columns of the corresponding pixels are saved in the lidar data.
 
@@ -455,7 +470,8 @@ pprint.pprint(lidar_front_center['timestamp'])
 """
 array([1537876333860863, 1537876333860962, 1537876333860973, ...,
        1537876333847857, 1537876333847892, 1537876333847947])
-Here we also see the timestamps of each measurement point in TAI. The camera is lagging behind the LiDAR points, i.e. the LiDAR measurements are taken before the corresponding image is captured. (timestamp_lidar-timestamp_camera)/(1000000) gives us the time difference between the measurement times of lidar data and the corresponding camera frame in seconds.
+Here we also see the timestamps of each measurement point in TAI. The camera is lagging behind the LiDAR points, i.e. the LiDAR measurements
+are taken before the corresponding image is captured. (timestamp_lidar-timestamp_camera)/(1000000) gives us the time difference between the measurement times of lidar data and the corresponding camera frame in seconds.
 """
 def plot_lidar_id_vs_delat_t(image_info, lidar):
     timestamps_lidar = lidar['timestamp']
@@ -478,7 +494,8 @@ def plot_lidar_id_vs_delat_t(image_info, lidar):
 
 plot_lidar_id_vs_delat_t(image_info_front_center, lidar_front_center)
 
-#Now we use col and row to map the LiDAR data onto images. The first function we use converts HSV to RGB. Please refere to the wikipedia article https://en.wikipedia.org/wiki/HSL_and_HSV for more information.
+#Now we use col and row to map the LiDAR data onto images. The first function we use converts HSV to RGB. Please refere to the wikipedia
+#article https://en.wikipedia.org/wiki/HSL_and_HSV for more information.
 
 def hsv_to_rgb(h, s, v):
     if s == 0.0:
@@ -591,7 +608,8 @@ pcd_lidar_colored = create_open3d_pc(lidar_front_center, semantic_image_front_ce
 o3.visualization.draw_geometries([pcd_lidar_colored])
 """
 Working with 3D bounding boxes
-Before we can start working with 3D bounding boxes, we need some utility functions. The first utility function we need is the conversion from axis-angle representation into rotation matrices.
+Before we can start working with 3D bounding boxes, we need some utility functions. The first utility function we need is the conversion
+from axis-angle representation into rotation matrices.
 """
 def skew_sym_matrix(u):
     return np.array([[    0, -u[2],  u[1]], 
@@ -690,7 +708,8 @@ pprint.pprint(boxes)
   'size': array([3.53, 1.7 , 1.72]),
   'top': 1496.03,
   'truncation': 1.0}]
-#We can generate the vertices of a bounding box in a particular order. The following function generates the vertices in the following order: [bottom_rear_left, bottom_front_left, bottom_front_right, bottom_rear_right, top_rear_left, top_front_left, top_front_right, top_rear_right]
+#We can generate the vertices of a bounding box in a particular order. The following function generates the vertices in the following order: 
+#[bottom_rear_left, bottom_front_left, bottom_front_right, bottom_rear_right, top_rear_left, top_front_left, top_front_right, top_rear_right]
 
 def get_points(bbox):
     half_size = bbox['size'] / 2.
